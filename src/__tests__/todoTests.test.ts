@@ -91,7 +91,25 @@ describe("the todo app", () => {
     expect(endingStars).toBeGreaterThan(startingStars);
   });
   it("has the right number of todos listed", async () => {
-    // count the amount of todos in the todo list
-    // verify the count is accurate
+    // this test will add a number of todos, make sure that the total count
+    // went up as would be expected, and that the count listed at the end is
+    // correct.
+    await driver.wait(until.elementLocated(todoPage.todoInput));
+
+    let startingTodoCount = await (await driver.findElements(todoPage.todos)).length;
+
+    // adding 5 todos here
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do 1\n");
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do 2\n");
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do 3\n");
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do 4\n");
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do 5\n");
+
+    let endingTodoCount = await (await driver.findElements(todoPage.todos)).length;
+
+    let message = await (await driver.findElement(todoPage.todoCount)).getText();
+
+    expect(endingTodoCount - startingTodoCount).toBe(5);
+    expect(message).toBe(`${endingTodoCount} items left`);
   });
 });
