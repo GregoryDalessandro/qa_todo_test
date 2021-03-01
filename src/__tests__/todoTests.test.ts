@@ -69,10 +69,26 @@ describe("the todo app", () => {
     // verify todo is no longer in todos list
     expect(myTodo.length).toEqual(0);
   });
+  // it("can mark a todo with a star", async () => {
+  //   // select a todo
+  //   // select the star
+  //   // verify the todo is marked with the star
+  //   await driver.wait(until.elementLocated(todoPage.todoInput);
+  // });
   it("can mark a todo with a star", async () => {
-    // select a todo
-    // select the star
-    // verify the todo is marked with the star
+    await driver.wait(until.elementLocated(todoPage.todoInput));
+    let startingStars = await (await driver.findElements(todoPage.starBanner)).length;
+
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do\n");
+    await (await driver.findElements(todoPage.todos))
+      .filter(async (todo) => {
+        (await (await todo.findElement(todoPage.todoLabel)).getText()) ==
+          "Test To-Do";
+      })[0]
+      .findElement(todoPage.todoStar)
+      .click();
+    let endingStars = await (await driver.findElements(todoPage.starBanner)).length;
+    expect(endingStars).toBeGreaterThan(startingStars);
   });
   it("has the right number of todos listed", async () => {
     // count the amount of todos in the todo list
