@@ -1,5 +1,35 @@
+import { isFunctionExpression } from "typescript";
+import {
+  Builder,
+  By,
+  Capabilities,
+  until,
+  WebDriver
+} from "selenium-webdriver";
+
+const chromedriver = require("chromedriver");
+const driver = new Builder().withCapabilities(Capabilities.chrome()).build();
+
 class TodoPage {
+  driver: WebDriver;
+  url: string = "https://devmountain.github.io/qa_todos/";
+  todoInput: By = By.className("new-todo");
+  todos: By = By.className("todo-list");
+  todo: By = By.className("todo");
+  todoLabel: By = By.xpath("//label");
+  todoStar: By = By.className("star");
+  starred: By = By.className("starred");
+  todoComplete: By = By.className("toggle");
+  clearCompletedButton: By = By.className("clear-completed");
+  todoCount: By = By.className("todo-count");
+
+  constructor(driver: WebDriver) {
+    this.driver = driver;
+  }
 }
+
+const todoPage = new TodoPage(driver);
+
 
 describe("the todo app", () => {
   // before each test navigate to the main page
