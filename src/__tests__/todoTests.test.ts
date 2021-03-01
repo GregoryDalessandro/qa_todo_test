@@ -33,23 +33,37 @@ const todoPage = new TodoPage(driver);
 
 describe("the todo app", () => {
   // before each test navigate to the main page
+  beforeEach(async() => {
+    await driver.get(todoPage.url);
+  });
   // after each test close the window
-  it("can add a todo", () => {
+  afterAll(async() => {
+    await driver.quit();
+  });
+  it("can add a todo", async() => {
+    await driver.wait(until.elementLocated(todoPage.todoInput));
     // select the search bar
       // type out a todo and press enter
+    await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do\n");
+    let myTodos = await driver.findElements(todoPage.todos);
+    // filter todos to find the one we just added
+    let myTodo = await myTodos.filter(async (todo) => {
+      (await (await todo.findElement(todoPage.todoLabel)).getText()) == "Test To-Do";
+    });
     // verify that the todo item is now in the list of todos
+    expect(myTodo).toBeTruthy();
   });
-  it("can remove a todo", () => {
+  it("can remove a todo", async () => {
     // select a todo
     // mark todo compelete
     // verify todo is no longer in todos list
   });
-  it("can mark a todo with a star", () => {
+  it("can mark a todo with a star", async () => {
     // select a todo
     // select the star
     // verify the todo is marked with the star
   });
-  it("has the right number of todos listed", () => {
+  it("has the right number of todos listed", async () => {
     // count the amount of todos in the todo list
     // verify the count is accurate
   });
