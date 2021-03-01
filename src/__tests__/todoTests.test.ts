@@ -14,14 +14,13 @@ class TodoPage {
   driver: WebDriver;
   url: string = "https://devmountain.github.io/qa_todos/";
   todoInput: By = By.className("new-todo");
-  todos: By = By.className("todo-list");
-  todo: By = By.className("todo");
-  todoLabel: By = By.xpath("//label");
+  todos: By = By.css("li.todo");
+  todoLabel: By = By.css("label");
+  todoComplete: By = By.css("input");
   todoStar: By = By.className("star");
-  starred: By = By.className("starred");
-  todoComplete: By = By.className("toggle");
-  clearCompletedButton: By = By.className("clear-completed");
+  starBanner: By = By.className("starred");
   todoCount: By = By.className("todo-count");
+  clearCompletedButton: By = By.css("button.clear-completed");
 
   constructor(driver: WebDriver) {
     this.driver = driver;
@@ -41,22 +40,34 @@ describe("the todo app", () => {
     await driver.quit();
   });
   it("can add a todo", async() => {
+    // select the search bar and add a todo
     await driver.wait(until.elementLocated(todoPage.todoInput));
-    // select the search bar
-      // type out a todo and press enter
     await driver.findElement(todoPage.todoInput).sendKeys("Test To-Do\n");
-    let myTodos = await driver.findElements(todoPage.todos);
-    // filter todos to find the one we just added
-    let myTodo = await myTodos.filter(async (todo) => {
-      (await (await todo.findElement(todoPage.todoLabel)).getText()) == "Test To-Do";
-    });
     // verify that the todo item is now in the list of todos
-    expect(myTodo).toBeTruthy();
+    // let myTodos = await driver.findElements(todoPage.todos);
+    // let myTodo = await myTodos.filter(async (todo) => {
+    //   (await (await todo.findElement(todoPage.todoLabel)).getText()) == "Test To-Do";
+    // });
+    // expect(myTodo).toBeTruthy();
   });
   it("can remove a todo", async () => {
+    let myTodos = await driver.findElements(todoPage.todos);
     // select a todo
+    await myTodos
+    .filter(async (todo) => {
+      (await (await todo.findElement(todoPage.todoLabel)).getText()) ==
+        "Test To-Do";
+    })[0]
+    .findElement(todoPage.todoComplete)
+    .click();
     // mark todo compelete
+    await (await driver.findElement(todoPage.clearCompletedButton)).click();
+    myTodos = await driver.findElements(todoPage.todos);
+    let myTodo = await myTodos.filter(async (todo) => {
+      (await (await todo.findElement(todoPage.todoLabel)).getText()) === "Test To-Do";
+    });
     // verify todo is no longer in todos list
+    expect(myTodo.length).toEqual(0);
   });
   it("can mark a todo with a star", async () => {
     // select a todo
